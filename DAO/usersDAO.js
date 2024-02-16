@@ -3844,12 +3844,167 @@ let tslGetRegistrantsByIDTemplate21 = (dataToSet, callback) => {
 };
 
 let tslGetSUMRegistrantsInformationTemplate21 = (dataToSet, callback) => {
-  var sql = `Select SUM(r.dRegAmount, r.dSpecialDiscountAmt, r.dServiceFeeAmt, r.dTaxesAmt, r.dCancellationFee) from Registrants r left join RegistrantsGroups rg ON (r.lRegID = rg.lRegID) left join 
-            RegTypes rt ON (r.lRegType = rt.lRegTypeID)
+  var data = {}
+  var sql = `Select SUM(r.dRegAmount) as dRegAmount, SUM(r.dSpecialDiscountAmt) as dSpecialDiscountAmt, SUM(r.dServiceFeeAmt) as dServiceFeeAmt, SUM(r.dTaxesAmt) as dTaxesAmt, SUM(r.dCancellationFee) as dCancellationFee from Registrants r left join RegistrantsGroups rg ON (r.lRegID = rg.lRegID)
             WHERE r.lAccountID='${dataToSet.lAccountID}' AND r.lEventID = '${dataToSet.lEventID}' AND rg.lMainRegID='${dataToSet.lRegID}'`;
-            console.log('sql',sql)
-  dbConfig.getDB().query(sql, callback);
+  dbConfig.getDB().query(sql, function(err, results){
+    if(results){
+        data.dRegAmount = results[0].dRegAmount
+        data.dSpecialDiscountAmt = results[0].dSpecialDiscountAmt
+        data.dServiceFeeAmt = results[0].dServiceFeeAmt
+        data.dCancellationFee = results[0].dCancellationFee
+        data.dTaxesAmt = results[0].dTaxesAmt
+    }
+
+    var sql2 = `Select SUM(dTotal) as dSessionsAmount from RegSessions r left join RegistrantsGroups rg ON (r.lRegID = rg.lRegID)
+    WHERE r.lAccountID='${dataToSet.lAccountID}' AND r.lEventID = '${dataToSet.lEventID}' AND rg.lMainRegID='${dataToSet.lRegID}'`;
+      dbConfig.getDB().query(sql2, function(err2,result2){
+        if(result2 && result2[0]!==undefined){
+          data.dSessionsAmount = result2[0].dSessionsAmount
+        }
+        callback("",data)
+      })
+        
+  });
 };
+
+let tslGetMembersList = (dataToSet, callback) => {
+  var sql = `Select * FROM Members
+   WHERE lAccountID='${dataToSet.lAccountID}'`;
+    dbConfig.getDB().query(sql, callback);
+};
+
+
+let tslAddMembers = (dataToSet, callback) => {
+  var sql = `INSERT INTO Members SET lAccountID='${
+    dataToSet.lAccountID ? dataToSet.lAccountID : null
+  }', sMemberType='${dataToSet.sMemberType ? dataToSet.sMemberType : null}',
+  sMemberStatus='${dataToSet.sMemberStatus ? dataToSet.sMemberStatus : null}',   
+  sMemberActiveDate='${
+    dataToSet.sMemberActiveDate ? dataToSet.sMemberActiveDate : '0000-00-00'
+  }', sMemberInactiveDate='${dataToSet.sMemberInactiveDate ? dataToSet.sMemberInactiveDate : '0000-00-00'}',
+  sMemberID='${
+    dataToSet.sMemberID ? dataToSet.sMemberID : null
+  }', sOther1='${dataToSet.sOther1 ? dataToSet.sOther1 : null}', sPrefix='${
+    dataToSet.sPrefix ? dataToSet.sPrefix : null
+  }',
+  sOther2='${
+    dataToSet.sOther2 ? dataToSet.sOther2 : null
+  }', sFirstName='${dataToSet.sFirstName ? dataToSet.sFirstName : null}', sOther3='${
+    dataToSet.sOther3 ? dataToSet.sOther3 : null
+  }',
+  sMiddleName='${dataToSet.sMiddleName ? dataToSet.sMiddleName : null}', sOther4='${
+    dataToSet.sOther4 ? dataToSet.sOther4 : null
+  }', sLastName='${dataToSet.sLastName ? dataToSet.sLastName : null}',
+  sOther5='${dataToSet.sOther5 ? dataToSet.sOther5 : null}', sSuffix='${
+    dataToSet.sSuffix ? dataToSet.sSuffix : null
+  }', sOther6='${dataToSet.sOther6 ? dataToSet.sOther6 : null}',
+  sCredentials='${dataToSet.sCredentials ? dataToSet.sCredentials : null}', sOther7='${
+    dataToSet.sOther7 ? dataToSet.sOther7 : null
+  }', sTitle='${dataToSet.sTitle ? dataToSet.sTitle : null}',
+  sOther8='${dataToSet.sOther8 ? dataToSet.sOther8 : null}', sCompany='${
+    dataToSet.sCompany ? dataToSet.sCompany : null
+  }', sOther9='${dataToSet.sOther9 ? dataToSet.sOther9 : null}',
+  sAddress1='${
+    dataToSet.sAddress1 ? dataToSet.sAddress1 : null
+  }', sOther10='${
+    dataToSet.sOther10 ? dataToSet.sOther10 : null
+  }', sAddress2='${dataToSet.sAddress2 ? dataToSet.sAddress2 : null}',
+  sOther11='${dataToSet.sOther11 ? dataToSet.sOther11 : null}', sAddress3='${
+    dataToSet.sAddress3 ? dataToSet.sAddress3 : null
+  }', sOther12='${
+    dataToSet.sOther12 ? dataToSet.sOther12 : null
+  }', sCity='${dataToSet.sCity ? dataToSet.sCity : null}',
+  sOther13='${
+    dataToSet.sOther13 ? dataToSet.sOther13 : null
+  }', sState='${dataToSet.sCity ? dataToSet.sCity : null}',sOther14='${
+    dataToSet.sOther14 ? dataToSet.sOther14 : null
+  }', sZip='${
+    dataToSet.sZip ? dataToSet.sZip : null
+  }', sOther15='${dataToSet.sOther15 ? dataToSet.sOther15 : null}',
+  sCountry='${dataToSet.sCountry ? dataToSet.sCountry : null}', sOther16='${
+    dataToSet.sOther16 ? dataToSet.sOther16 : null
+  }', sPhone='${
+    dataToSet.sPhone ? dataToSet.sPhone : null
+  }', sOther17='${dataToSet.sOther17 ? dataToSet.sOther17 : null}',
+  sCell='${
+    dataToSet.sCell ? dataToSet.sCell : null
+  }', sOther18='${dataToSet.sOther18 ? dataToSet.sOther18 : null}', sFax='${
+    dataToSet.sFax ? dataToSet.sFax : null
+  }', sOther19='${
+    dataToSet.sOther19 ? dataToSet.sOther19 : null
+  }', sEmail='${dataToSet.sEmail ? dataToSet.sEmail : null}',
+  sOther20='${dataToSet.sOther20 ? dataToSet.sOther20 : null}',
+  dtCreatedOn='${dataToSet.dtCreatedOn ? dataToSet.dtCreatedOn : '0000-00-00'}',
+  dtUpdatedOn='${dataToSet.dtUpdatedOn ? dataToSet.dtUpdatedOn : '0000-00-00'}'`;
+  dbConfig.getDB().query(sql, callback);  
+};
+
+let tslupdateMemberDetails = (dataToSet, callback) => { 
+    var sql = `UPDATE Members SET sMemberType='${dataToSet.sMemberType ? dataToSet.sMemberType : null}',
+    sMemberStatus='${dataToSet.sMemberStatus ? dataToSet.sMemberStatus : null}',   
+    sMemberActiveDate='${
+      dataToSet.sMemberActiveDate ? dataToSet.sMemberActiveDate : '0000-00-00'
+    }', sMemberInactiveDate='${dataToSet.sMemberInactiveDate ? dataToSet.sMemberInactiveDate : '0000-00-00'}',
+    sMemberID='${
+      dataToSet.sMemberID ? dataToSet.sMemberID : null
+    }', sOther1='${dataToSet.sOther1 ? dataToSet.sOther1 : null}', sPrefix='${
+      dataToSet.sPrefix ? dataToSet.sPrefix : null
+    }',
+    sOther2='${
+      dataToSet.sOther2 ? dataToSet.sOther2 : null
+    }', sFirstName='${dataToSet.sFirstName ? dataToSet.sFirstName : null}', sOther3='${
+      dataToSet.sOther3 ? dataToSet.sOther3 : null
+    }',
+    sMiddleName='${dataToSet.sMiddleName ? dataToSet.sMiddleName : null}', sOther4='${
+      dataToSet.sOther4 ? dataToSet.sOther4 : null
+    }', sLastName='${dataToSet.sLastName ? dataToSet.sLastName : null}',
+    sOther5='${dataToSet.sOther5 ? dataToSet.sOther5 : null}', sSuffix='${
+      dataToSet.sSuffix ? dataToSet.sSuffix : null
+    }', sOther6='${dataToSet.sOther6 ? dataToSet.sOther6 : null}',
+    sCredentials='${dataToSet.sCredentials ? dataToSet.sCredentials : null}', sOther7='${
+      dataToSet.sOther7 ? dataToSet.sOther7 : null
+    }', sTitle='${dataToSet.sTitle ? dataToSet.sTitle : null}',
+    sOther8='${dataToSet.sOther8 ? dataToSet.sOther8 : null}', sCompany='${
+      dataToSet.sCompany ? dataToSet.sCompany : null
+    }', sOther9='${dataToSet.sOther9 ? dataToSet.sOther9 : null}',
+    sAddress1='${
+      dataToSet.sAddress1 ? dataToSet.sAddress1 : null
+    }', sOther10='${
+      dataToSet.sOther10 ? dataToSet.sOther10 : null
+    }', sAddress2='${dataToSet.sAddress2 ? dataToSet.sAddress2 : null}',
+    sOther11='${dataToSet.sOther11 ? dataToSet.sOther11 : null}', sAddress3='${
+      dataToSet.sAddress3 ? dataToSet.sAddress3 : null
+    }', sOther12='${
+      dataToSet.sOther12 ? dataToSet.sOther12 : null
+    }', sCity='${dataToSet.sCity ? dataToSet.sCity : null}',
+    sOther13='${
+      dataToSet.sOther13 ? dataToSet.sOther13 : null
+    }', sState='${dataToSet.sCity ? dataToSet.sCity : null}',sOther14='${
+      dataToSet.sOther14 ? dataToSet.sOther14 : null
+    }', sZip='${
+      dataToSet.sZip ? dataToSet.sZip : null
+    }', sOther15='${dataToSet.sOther15 ? dataToSet.sOther15 : null}',
+    sCountry='${dataToSet.sCountry ? dataToSet.sCountry : null}', sOther16='${
+      dataToSet.sOther16 ? dataToSet.sOther16 : null
+    }', sPhone='${
+      dataToSet.sPhone ? dataToSet.sPhone : null
+    }', sOther17='${dataToSet.sOther17 ? dataToSet.sOther17 : null}',
+    sCell='${
+      dataToSet.sCell ? dataToSet.sCell : null
+    }', sOther18='${dataToSet.sOther18 ? dataToSet.sOther18 : null}', sFax='${
+      dataToSet.sFax ? dataToSet.sFax : null
+    }', sOther19='${
+      dataToSet.sOther19 ? dataToSet.sOther19 : null
+    }', sEmail='${dataToSet.sEmail ? dataToSet.sEmail : null}',
+    sOther20='${dataToSet.sOther20 ? dataToSet.sOther20 : null}',
+    dtCreatedOn='${dataToSet.dtCreatedOn ? dataToSet.dtCreatedOn : '0000-00-00'}',
+    dtUpdatedOn='${dataToSet.dtUpdatedOn ? dataToSet.dtUpdatedOn : '0000-00-00'}'  
+      where lMemberUniqueID = ${dataToSet.lMemberUniqueID}`;
+    dbConfig.getDB().query(sql, callback);
+};
+
+
 
 module.exports = {
   login,
@@ -4039,5 +4194,8 @@ module.exports = {
   tslGetRegistrantsInformationTemplate21,
   tslGetRegistrantSessionsTemplate21,
   tslGetRegistrantsByIDTemplate21,
-  tslGetSUMRegistrantsInformationTemplate21
+  tslGetSUMRegistrantsInformationTemplate21,
+  tslGetMembersList,
+  tslAddMembers,
+  tslupdateMemberDetails
 };

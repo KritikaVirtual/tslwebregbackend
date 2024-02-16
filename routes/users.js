@@ -978,6 +978,15 @@ router.get("/tslGetSUMRegistrantsInformationTemplate21",  function (req, res) {
   });
 });
 
+/* Get Members list  */
+
+router.get("/tslGetMembersList",  function (req, res) {
+
+  usersService.tslGetMembersList(req.query, (data) => {
+     res.send(data);
+  });
+});
+
 /* Client API */
 
 /* POST Client login */
@@ -995,5 +1004,20 @@ router.post("/saveClientInformation", (req, res) => {
     res.send(data);
   });
 });
+
+/* Add Registrant */
+
+router.post("/tslAddMembers", verifyToken, function (req, res) {
+  usersService.tslAddMembers(req.body, (data) => {
+    res.send(data);
+  });
+});
+
+router.post("/tslUpdateMember", verifyToken, function (req, res) {
+  usersService.tslUpdateMemberInfo(req.body, (data) => {
+    res.send(data);
+  });
+});
+
 
 module.exports = router;

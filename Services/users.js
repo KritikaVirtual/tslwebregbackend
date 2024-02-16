@@ -34,7 +34,8 @@ const {
   tslGetDiscountCodesByIdValidation,
   tslExhibitorInfoValidation,
   tslAccountIdEventIdRegIDValidation,
-  tslAccountIdEventIdCategoryIdValidation
+  tslAccountIdEventIdCategoryIdValidation,
+  tslAccountIdValidation
 } = require("../Validation/user");
 
 const randtoken = require("rand-token");
@@ -5949,6 +5950,125 @@ let tslGetSUMRegistrantsInformationTemplate21 = function (data, callback) {
   );
 };
 
+let tslGetMembersList = function (data, callback) {
+  async.auto(
+    {
+      tslGetMembersList: (cb) => {
+        usersDAO.tslGetMembersList(data, (err, dbData) => {
+          
+          if (err) {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.SERVER_BUSY,
+            });
+            return;
+          }
+          
+          if (dbData) {
+            cb(null, {
+              errorCode: util.statusCode.ZERO,
+              errorMessage: util.statusMessage.RECORD_FOUND_SUCCESSFULLY,
+              data: dbData,
+            });
+          } else {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.NO_RECORD_FOUND,
+            });
+          }
+        });
+      },
+    },
+    (err, response) => {
+      callback(response.tslGetMembersList);
+    }
+  );
+};
+
+
+
+let tslAddMembers = (data, callback) => {
+  async.auto(
+    { 
+      tslAddMembers: (cb) => {
+        let dataToValidate = {
+          lAccountID: data.lAccountID
+        };
+        const { error } = tslAccountIdValidation(dataToValidate);
+        if (error) {
+          cb(null, {
+            errorCode: util.statusCode.TWO,
+            errorMessage: error.details[0].message,
+          });
+          return;
+        }
+
+        usersDAO.tslAddMembers(data, (err, dbData) => {
+          if (err) {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.SERVER_BUSY,
+            });
+            return;
+          }
+          if (dbData.insertId || dbData.affectedRows == 1) {
+            cb(null, {
+              errorCode: util.statusCode.ZERO,
+              errorMessage: util.statusMessage.ADDED_SUCC,
+              result: dbData,
+            });
+          } else {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.SOMETHING_WENT_WRONG,
+              result: {},
+            });
+          }
+        });
+      },
+    },
+    (err, response) => {
+      callback(response.tslAddMembers);
+    }
+  );
+};
+
+
+
+let tslUpdateMemberInfo = function (data, callback) {
+  async.auto(
+    {
+      updateMemberInfo: (cb) => {
+        usersDAO.tslupdateMemberDetails(data, (err, dbData) => {
+          if (err) {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.SERVER_BUSY,
+            });
+            return;
+          }
+          if (dbData.affectedRows > 0) {
+            cb(null, {
+              errorCode: util.statusCode.ZERO,
+              errorMessage: util.statusMessage.UPDATED_SUCC,
+              result: dbData,
+            });
+          } else {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.UPDATED_ERROR,
+            });
+          }
+        });
+      },
+    },
+    (err, response) => {
+      callback(response.updateMemberInfo);
+    }
+  );
+};
+
+
 
 module.exports = {
   tslAdminLogin,
@@ -6061,5 +6181,8 @@ module.exports = {
   tslGetRegistrantsInformationTemplate21,
   tslGetRegistrantSessionsTemplate21,
   tslGetRegistrantsByIDTemplate21,
-  tslGetSUMRegistrantsInformationTemplate21
+  tslGetSUMRegistrantsInformationTemplate21,
+  tslGetMembersList,
+  tslAddMembers,
+  tslUpdateMemberInfo
 };
