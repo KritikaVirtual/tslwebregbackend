@@ -6068,6 +6068,54 @@ let tslUpdateMemberInfo = function (data, callback) {
   );
 };
 
+let tslInsertGroupRegistrants = (data, callback) => {
+  async.auto(
+    {
+      tslInsertGroupRegistrants: (cb) => {
+        let dataToValidate = {
+          lAccountID: data.lAccountID,
+          lEventID: data.lEventID
+        };
+        const { error } = tslAccountIdEventIdValidation(dataToValidate);
+        if (error) {
+          cb(null, {
+            errorCode: util.statusCode.TWO,
+            errorMessage: error.details[0].message,
+          });
+          return;
+        }
+
+        usersDAO.tslInsertGroupRegistrants(data, (err, dbData) => {
+          if (err) {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.SERVER_BUSY,
+            });
+            return;
+          }
+          if (dbData.insertId || dbData.affectedRows == 1) {
+            cb(null, {
+              errorCode: util.statusCode.ZERO,
+              errorMessage: util.statusMessage.ADDED_SUCC,
+              result: dbData,
+            });
+          } else {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.SOMETHING_WENT_WRONG,
+              result: {},
+            });
+          }
+        });
+      },
+    },
+    (err, response) => {
+      callback(response.tslInsertGroupRegistrants);
+    }
+  );
+};
+
+
 
 
 module.exports = {
@@ -6184,5 +6232,6 @@ module.exports = {
   tslGetSUMRegistrantsInformationTemplate21,
   tslGetMembersList,
   tslAddMembers,
-  tslUpdateMemberInfo
+  tslUpdateMemberInfo,
+  tslInsertGroupRegistrants
 };

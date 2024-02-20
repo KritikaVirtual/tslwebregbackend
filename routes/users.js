@@ -978,6 +978,15 @@ router.get("/tslGetSUMRegistrantsInformationTemplate21",  function (req, res) {
   });
 });
 
+
+/* Add Registrant */
+
+router.post("/tslInsertGroupRegistrants", (req, res) => {
+  usersService.tslInsertGroupRegistrants(req.body, (data) => {
+    res.send(data);
+  });
+});
+
 /* Get Members list  */
 
 router.get("/tslGetMembersList",  function (req, res) {

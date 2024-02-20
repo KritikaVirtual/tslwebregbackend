@@ -3874,6 +3874,49 @@ let tslGetMembersList = (dataToSet, callback) => {
     dbConfig.getDB().query(sql, callback);
 };
 
+let tslInsertGroupRegistrants = (dataToSet, callback) => {
+  var sql = `INSERT INTO Registrants SET lAccountID='${dataToSet.lAccountID}', lEventID='${dataToSet.lEventID}',
+      sMemberID='${dataToSet.sMemberID ? dataToSet.sMemberID : 'null'}', sPrefix='${dataToSet.sPrefix ? dataToSet.sPrefix : ''}', sFirstName='${dataToSet.sFirstName ? dataToSet.sFirstName : ''}',
+      sMiddleName='${dataToSet.sMiddleName ? dataToSet.sMiddleName : ''}', sLastName='${dataToSet.sLastName ? dataToSet.sLastName : ''}', sSuffix='${dataToSet.sSuffix ? dataToSet.sSuffix : ''}',
+      sCredentials='${dataToSet.sCredentials ? dataToSet.sCredentials : ''}', sTitle='${dataToSet.sTitle ? dataToSet.sTitle : ''}', sCompany='${dataToSet.sCompany ? dataToSet.sCompany : ''}',
+      sAddress1='${dataToSet.sAddress1 ? dataToSet.sAddress1 : ''}', sAddress2='${dataToSet.sAddress2 ? dataToSet.sAddress2 : ''}', sAddress3='${dataToSet.sAddress3 ? dataToSet.sAddress3 : ''}',
+      sCity='${dataToSet.sCity ? dataToSet.sCity : ''}', sState='${dataToSet.sState ? dataToSet.sState : ''}', sZip='${dataToSet.sZip ? dataToSet.sZip : ''}', 
+      sCountry='${dataToSet.sCountry ? dataToSet.sCountry : ''}', sPhone='${dataToSet.sPhone ? dataToSet.sPhone : ''}', sCell='${dataToSet.sCell ? dataToSet.sCell : ''}',
+      sFax='${dataToSet.sFax ? dataToSet.sFax : ''}', sEmail='${dataToSet.sEmail ? dataToSet.sEmail : ''}',
+      lRegType ='${dataToSet.lRegType ? dataToSet.lRegType : ''}',
+      dRegAmount='${dataToSet.dRegAmount ?  dataToSet.dRegAmount : 0}',
+      nStatus='${dataToSet.nStatus ? dataToSet.nStatus : ''}',
+      dTaxesAmt = '${dataToSet.dTaxesAmt ?  dataToSet.dTaxesAmt : 0}',
+      dServiceFeeAmt = '${dataToSet.dServiceFeeAmt ? dataToSet.dServiceFeeAmt : 0}',
+       lDiscountID ='${dataToSet.lCategoryID ? dataToSet.lCategoryID : ''}',
+      dSpecialDiscountAmt = '${dataToSet.dSpecialDiscountAmt ?  dataToSet.dSpecialDiscountAmt : 0}',
+       mNotes = '${dataToSet.dtUpdatedOn ? dataToSet.dtUpdatedOn : ''}',
+      dCancellationFee = '${dataToSet.dCancellationFee ? dataToSet.dCancellationFee : 0}',
+      sDiscountExtraText = '${dataToSet.lCategoryID ? dataToSet.lCategoryID : ''}',
+      lCategoryID = '${dataToSet.lCategoryID ? dataToSet.lCategoryID : ''}',
+       dtCreatedOn = '${util.getCurrentDatetime()}',
+      dtUpdatedOn = '${util.getCurrentDatetime()}',
+      sModifiedBy = '${dataToSet.sModifiedBy ? dataToSet.sModifiedBy : ''}',
+       dtUpdatedOnMicroSeconds = '${dataToSet.dtUpdatedOnMicroSeconds ? dataToSet.dtUpdatedOnMicroSeconds : ''}', 
+      sPicture = '${dataToSet.sPicture ? dataToSet.sPicture : ''}',
+       sOtherInfo1 = '${dataToSet.sOtherInfo1 ? dataToSet.sOtherInfo1 : ''}', 
+       sOtherInfo2 = '${dataToSet.sOtherInfo2 ? dataToSet.sOtherInfo2 : ''}',
+      sOtherInfo3 = '${dataToSet.sOtherInfo3 ? dataToSet.sOtherInfo3 : ''}',
+       sOtherInfo4 = '${dataToSet.sOtherInfo4 ? dataToSet.sOtherInfo4 : ''}',
+        sSource = '${dataToSet.sSource ? dataToSet.sSource : ''}',
+         lImisID = '${dataToSet.lImisID ? dataToSet.lImisID : ''}',
+      address_type = '${dataToSet.address_type ? dataToSet.address_type : ''}'`;
+
+      console.log('sql',sql)
+         dbConfig.getDB().query(sql, function(err,result){  
+         if(result.affectedRows>0){  
+         const  sql2 = `INSERT INTO RegistrantsGroups (lAccountID, lEventID, lMainRegID, lRegID, dtCreatedOn) VALUES ('${dataToSet.lAccountID}','${dataToSet.lEventID}','${dataToSet.lMainRegID}','${result.insertId}','${util.getCurrentDatetime()}')`;       
+         console.log('sql2',sql2)
+         dbConfig.getDB().query(sql2,callback);
+         }
+        });
+      
+}
 
 let tslAddMembers = (dataToSet, callback) => {
   var sql = `INSERT INTO Members SET lAccountID='${
@@ -4197,5 +4240,6 @@ module.exports = {
   tslGetSUMRegistrantsInformationTemplate21,
   tslGetMembersList,
   tslAddMembers,
-  tslupdateMemberDetails
+  tslupdateMemberDetails,
+  tslInsertGroupRegistrants
 };
