@@ -6115,7 +6115,115 @@ let tslInsertGroupRegistrants = (data, callback) => {
   );
 };
 
+let tslGetRegistrantsGroupsMainRegIdExist = function (data, callback) {
+  async.auto(
+    {
+      tslGetRegistrantsGroupsMainRegIdExist: (cb) => {
+        let dataToSet = {
+          lAccountID: data.lAccountID,
+          lEventID: data.lEventID,
+          lRegID: data.lRegID
+        };
+       
+        usersDAO.tslGetRegistrantsGroupsMainRegIdExist(dataToSet, (err, dbData) => {
+          if (err) {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.SERVER_BUSY,
+            });
+            return;
+          }
+          if (dbData.length) {
+            cb(null, {
+              errorCode: util.statusCode.ZERO,
+              errorMessage: util.statusMessage.RECORD_FOUND_SUCCESSFULLY,
+              data: dbData,
+            });
+          } else {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.NO_RECORD_FOUND,
+            });
+          }
+        });
+      },
+    },
+    (err, response) => {
+      callback(response.tslGetRegistrantsGroupsMainRegIdExist);
+    }
+  );
+};
 
+let tslUpdateGroupRegistrants = function (data, callback) {
+  console.log("sdj");
+  async.auto(
+    {
+      tslUpdateGroupRegistrants: (cb) => {
+        usersDAO.tslUpdateGroupRegistrants(data, (err, dbData) => {
+          console.log(dbData);
+          if (err) {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.SERVER_BUSY,
+            });
+            return;
+          }
+          if (dbData.affectedRows > 0) {
+            cb(null, {
+              errorCode: util.statusCode.ZERO,
+              errorMessage: util.statusMessage.UPDATED_SUCC,
+              result: dbData,
+            });
+          } else {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.UPDATED_ERROR,
+            });
+          }
+        });
+      },
+    },
+    (err, response) => {
+      callback(response.tslUpdateGroupRegistrants);
+    }
+  );
+};
+
+
+let tslGetDicountCodesByRegType = function (data, callback) {
+  async.auto(
+    {
+      tslGetDicountCodesByRegType: (cb) => {
+        usersDAO.tslGetDicountCodesByRegType(data, (err, dbData) => {
+          
+          if (err) {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.SERVER_BUSY,
+            });
+            return;
+          }
+          
+          if (dbData) {
+            cb(null, {
+              errorCode: util.statusCode.ZERO,
+              errorMessage: util.statusMessage.RECORD_FOUND_SUCCESSFULLY,
+              data: dbData,
+            });
+          } else {
+            cb(null, {
+              errorCode: util.statusCode.ONE,
+              errorMessage: util.statusMessage.NO_RECORD_FOUND,
+            });
+          }
+        });
+      },
+    },
+    (err, response) => {
+      callback(response.tslGetDicountCodesByRegType);
+    }
+  );
+};
 
 
 module.exports = {
@@ -6233,5 +6341,8 @@ module.exports = {
   tslGetMembersList,
   tslAddMembers,
   tslUpdateMemberInfo,
-  tslInsertGroupRegistrants
+  tslInsertGroupRegistrants,
+tslGetRegistrantsGroupsMainRegIdExist,
+  tslUpdateGroupRegistrants,
+  tslGetDicountCodesByRegType
 };

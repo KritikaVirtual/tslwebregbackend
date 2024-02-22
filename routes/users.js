@@ -996,6 +996,23 @@ router.get("/tslGetMembersList",  function (req, res) {
   });
 });
 
+/* Get Registrants Groups Main Reg Id Exist list  */
+
+router.get("/tslGetRegistrantsGroupsMainRegIdExist",  function (req, res) {
+
+  usersService.tslGetRegistrantsGroupsMainRegIdExist(req.query, (data) => {
+     res.send(data);
+  });
+});
+
+/* Update Group Registrant */
+
+router.post("/tslUpdateGroupRegistrants", (req, res) => {
+  usersService.tslUpdateGroupRegistrants(req.body, (data) => {
+    res.send(data);
+  });
+});
+
 /* Client API */
 
 /* POST Client login */
@@ -1028,5 +1045,16 @@ router.post("/tslUpdateMember", verifyToken, function (req, res) {
   });
 });
 
+
+
+
+/* Get Members list  */
+
+router.get("/tslGetDicountCodesByRegType",  function (req, res) {
+
+  usersService.tslGetDicountCodesByRegType(req.query, (data) => {
+     res.send(data);
+  });
+});
 
 module.exports = router;
