@@ -3824,8 +3824,8 @@ let tslInsertTemplate21RegistrantsData = (dataToSet, callback) => {
 }
 
 let tslGetRegistrantsInformationTemplate21 = (dataToSet, callback) => {
-  var sql = `Select r.*, rt.sCode from Registrants r left join RegistrantsGroups rg ON (r.lRegID = rg.lRegID) left join 
-            RegTypes rt ON (r.lRegType = rt.lRegTypeID)
+  var sql = `Select r.*, rt.sCode, dc.sCode as discountCode,dc.dAmount as discountAmount from Registrants r left join RegistrantsGroups rg ON (r.lRegID = rg.lRegID) left join 
+            RegTypes rt ON (r.lRegType = rt.lRegTypeID) left join DiscountsConfig dc ON (r.lDiscountID = dc.lDiscountID)
             WHERE r.lAccountID='${dataToSet.lAccountID}' AND r.lEventID = '${dataToSet.lEventID}' AND rg.lMainRegID='${dataToSet.lRegID}'`;
 
   dbConfig.getDB().query(sql, callback);
@@ -3837,9 +3837,8 @@ let tslGetRegistrantSessionsTemplate21 = (dataToSet, callback) => {
   
     dbConfig.getDB().query(sql, callback);
 };
-
 let tslGetRegistrantsByIDTemplate21 = (dataToSet, callback) => {
-  var sql = `Select * FROM Registrants where lAccountID = '${dataToSet.lAccountID}' and lEventID = '${dataToSet.lEventID}' and  lRegID = '${dataToSet.lRegID}'`;
+  var sql = `Select *, dc.sCode as discountCode,dc.dAmount FROM Registrants r left join DiscountsConfig dc ON (r.lDiscountID = dc.lDiscountID) where r.lAccountID = '${dataToSet.lAccountID}' and r.lEventID = '${dataToSet.lEventID}' and  r.lRegID = '${dataToSet.lRegID}'`;
   dbConfig.getDB().query(sql, callback);
 };
 
@@ -4004,7 +4003,6 @@ let tslupdateMemberDetails = (dataToSet, callback) => {
     dbConfig.getDB().query(sql, callback);
 };
 
-
 let tslInsertGroupRegistrants = (dataToSet, callback) => {
   var sql = `INSERT INTO Registrants SET lAccountID='${dataToSet.lAccountID}', lEventID='${dataToSet.lEventID}',
       sMemberID='${dataToSet.sMemberID ? dataToSet.sMemberID : 'null'}', sPrefix='${dataToSet.sPrefix ? dataToSet.sPrefix : ''}', sFirstName='${dataToSet.sFirstName ? dataToSet.sFirstName : ''}',
@@ -4019,7 +4017,7 @@ let tslInsertGroupRegistrants = (dataToSet, callback) => {
       nStatus='${dataToSet.nStatus ? dataToSet.nStatus : ''}',
       dTaxesAmt = '${dataToSet.dTaxesAmt ?  dataToSet.dTaxesAmt : 0}',
       dServiceFeeAmt = '${dataToSet.dServiceFeeAmt ? dataToSet.dServiceFeeAmt : 0}',
-       lDiscountID ='${dataToSet.lCategoryID ? dataToSet.lCategoryID : ''}',
+       lDiscountID ='${dataToSet.lDiscountID ? dataToSet.lDiscountID : ''}',
       dSpecialDiscountAmt = '${dataToSet.dSpecialDiscountAmt ?  dataToSet.dSpecialDiscountAmt : 0}',
        mNotes = '${dataToSet.dtUpdatedOn ? dataToSet.dtUpdatedOn : ''}',
       dCancellationFee = '${dataToSet.dCancellationFee ? dataToSet.dCancellationFee : 0}',
@@ -4062,7 +4060,7 @@ let tslUpdateGroupRegistrants = (dataToSet, callback) => {
       nStatus='${dataToSet.nStatus ? dataToSet.nStatus : ''}',
       dTaxesAmt = '${dataToSet.dTaxesAmt ?  dataToSet.dTaxesAmt : 0}',
       dServiceFeeAmt = '${dataToSet.dServiceFeeAmt ? dataToSet.dServiceFeeAmt : 0}',
-       lDiscountID ='${dataToSet.lCategoryID ? dataToSet.lCategoryID : ''}',
+       lDiscountID ='${dataToSet.lDiscountID ? dataToSet.lDiscountID : ''}',
       dSpecialDiscountAmt = '${dataToSet.dSpecialDiscountAmt ?  dataToSet.dSpecialDiscountAmt : 0}',
        mNotes = '${dataToSet.dtUpdatedOn ? dataToSet.dtUpdatedOn : ''}',
       dCancellationFee = '${dataToSet.dCancellationFee ? dataToSet.dCancellationFee : 0}',
@@ -4083,7 +4081,6 @@ let tslUpdateGroupRegistrants = (dataToSet, callback) => {
       
       dbConfig.getDB().query(sql,callback);   
 }
-
 let tslGetDicountCodesByRegType = (dataToSet, callback) => {
   var sql = `SELECT lDiscountID as value,sCode as label, dAmount FROM DiscountsConfig
   WHERE lAccountID='${dataToSet.lAccountID}' AND lEventID = '${dataToSet.lEventID}'
